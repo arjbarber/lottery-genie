@@ -5,6 +5,7 @@ import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, LSTM
 from sklearn.preprocessing import MinMaxScaler
+import statistics as stat
 
 def fetch_data_as_dict(db_path: str, table: str):
     db = sqlite3.connect(db_path)
@@ -90,8 +91,9 @@ def predict():
 
     n_steps = 2
 
-    count = 100
-    sums = [0] * 5
+    count = 1000
+    nums = [[] for i in range(5)]
+    #sums = [0] * 5
 
     for i in range(0, count):
         X, y = create_sequences(data, n_steps)
@@ -108,15 +110,19 @@ def predict():
         next_row_list = next_row[0].tolist()
 
         rounded_rows = [round(num) for num in next_row_list]
+
+        for j, num in enumerate(rounded_rows):
+            nums[j].append(num)
+
+
         #print(rounded_rows)
         
-        for j, sum in enumerate(sums):
-            sums[j] += next_row_list[j]
+        #for j, sum in enumerate(sums):
+            #sums[j] += next_row_list[j]
             #print(sum)
         
-    average = [sums[i]/count for i in range(0,5)]
-    average = [round(num) for num in average]
-    print(f"Average: {average}")
+    mode = [stat.mode(list_num) for list_num in nums]
+    print(f"Mode: {mode}")
 
 
 
